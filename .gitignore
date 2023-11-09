@@ -4,6 +4,10 @@ data/
 # Ignore outputs that are generated
 outputs/
 
+# Personal txt files
+structure_model.txt
+project_goals.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
