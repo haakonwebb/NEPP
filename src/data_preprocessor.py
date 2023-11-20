@@ -2,10 +2,12 @@
 # This file is part of NEPP which is released under GNU GPLv3.
 # See file LICENSE or go to https://www.gnu.org/licenses/gpl-3.0.html for full license details.
 
+import config
 import os
 from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 import pandas as pd
+import glob
 
 def parse_xml_to_df(xml_file_path):
     """
@@ -72,14 +74,68 @@ def save_df_to_csv(df, filename, directory='data/processed'):
     df.to_csv(file_path, index=False)
     print(f"Data saved to {file_path}")
 
+def process_all_xml_files():
+    # Using paths from the config file
+    raw_folder_path = config.DATA_RAW_DIR
+
+    # List all XML files in the raw data folder
+    xml_files = glob.glob(os.path.join(raw_folder_path, '*.xml'))
+
+    # Process the files using the common function
+    process_files(xml_files)
+
+def process_files(file_list):
+    for xml_file in file_list:
+        df = parse_xml_to_df(xml_file)
+        csv_filename = os.path.basename(xml_file).replace('.xml', '.csv')
+        save_df_to_csv(df, csv_filename, directory=config.DATA_PROCESSED_DIR)
+
+def process_first_x_files(x):
+    xml_files = sorted(glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml')))[:x]
+    process_files(xml_files)
+
+def process_last_x_files(x):
+    xml_files = sorted(glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml')))[-x:]
+    process_files(xml_files)
+
 if __name__ == "__main__":
     
     # Example usage
-    xml_file_path = 'data/raw/10Y1001A1001A48H_20231102_to_20231103_prices.xml'  # Replace with your XML file path
+    # xml_file_path = 'data/raw/10Y1001A1001A48H_20231102_to_20231103_prices.xml'  # Replace with your XML file path
     
-    # Check if the file exists
-    if os.path.exists(xml_file_path):
-        processed_data_df = parse_xml_to_df(xml_file_path)
-        save_df_to_csv(processed_data_df, 'processed_data.csv')
+    user_choice = input("Choose an option: 'specific', 'all', 'first X', or 'last X' files: ").strip().lower()
+
+    if user_choice == 'specific':
+        file_name = input("Enter the name of the file to process (e.g., 'example.xml'): ").strip()
+        xml_file_path = os.path.join(config.DATA_RAW_DIR, file_name)
+
+        if os.path.exists(xml_file_path):
+            processed_data_df = parse_xml_to_df(xml_file_path)
+            csv_filename = file_name.replace('.xml', '.csv')
+            save_df_to_csv(processed_data_df, csv_filename)
+            print(f"Processed file saved as: {csv_filename}")
+        else:
+            print(f"File not found: {xml_file_path}")
+
+    elif user_choice == 'all':
+        process_all_xml_files()
+        print("Processed all files in the raw data directory.")
+
+    elif user_choice.startswith('first') or user_choice.startswith('last'):
+        try:
+            num_files = int(user_choice.split()[1])
+            if num_files < 0:
+                raise ValueError("Number of files must be non-negative.")
+            
+            if user_choice.startswith('first'):
+                process_first_x_files(num_files)
+                print(f"Processed the first {num_files} files in the raw data directory.")
+            else:
+                process_last_x_files(num_files)
+                print(f"Processed the last {num_files} files in the raw data directory.")
+                
+        except (IndexError, ValueError) as e:
+            print(f"Invalid input: {e}")
+
     else:
-        print(f"File not found: {xml_file_path}")
+        print("Invalid input. Please enter one of the specified options.")
