@@ -8,6 +8,25 @@ from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 import pandas as pd
 import glob
+import random
+from data_processing_tracker import update_file_metadata
+
+
+
+namespace_cache = {}  # Cache for storing namespaces
+
+def extract_namespace(xml_file_path):
+    for _, elem in ET.iterparse(xml_file_path, events=("start",)):
+        # Get the namespace from the first element
+        namespace = elem.tag.split('}')[0].strip('{')
+        return namespace
+
+def get_namespace(area_code, xml_file_path):
+    if area_code not in namespace_cache:
+        namespace_uri = extract_namespace(xml_file_path)
+        namespace_cache[area_code] = {'ns': namespace_uri}  # Store as a dictionary
+    return namespace_cache[area_code]
+
 
 def parse_xml_to_df(xml_file_path):
     """
@@ -19,8 +38,12 @@ def parse_xml_to_df(xml_file_path):
     Returns:
     DataFrame: The converted data as a pandas DataFrame.
     """
-    # Define the namespace map to use with the XML
-    ns = {'ns': 'urn:iec62325.351:tc57wg16:451-3:publicationdocument:7:0'}  # Namespace
+
+    # Extract area code from the filename
+    area_code = os.path.basename(xml_file_path).split('_')[0]
+
+    # Retrieve or extract the namespace using the area code
+    ns = get_namespace(area_code, xml_file_path)  # ns is now a dictionary
 
     tree = ET.parse(xml_file_path)
     root = tree.getroot()
@@ -74,21 +97,21 @@ def save_df_to_csv(df, filename, directory='data/processed'):
     df.to_csv(file_path, index=False)
     print(f"Data saved to {file_path}")
 
-def process_all_xml_files():
-    # Using paths from the config file
-    raw_folder_path = config.DATA_RAW_DIR
-
-    # List all XML files in the raw data folder
-    xml_files = glob.glob(os.path.join(raw_folder_path, '*.xml'))
-
-    # Process the files using the common function
-    process_files(xml_files)
-
 def process_files(file_list):
     for xml_file in file_list:
         df = parse_xml_to_df(xml_file)
-        csv_filename = os.path.basename(xml_file).replace('.xml', '.csv')
+        # Replace '.xml' with '_preprocessed.csv' to get the new filename
+        csv_filename = os.path.basename(xml_file).replace('.xml', '_preprocessed.csv')
+        # Join with the directory path
+        csv_file_path = os.path.join(config.DATA_PROCESSED_DIR, csv_filename)
+        # Save DataFrame to CSV
         save_df_to_csv(df, csv_filename, directory=config.DATA_PROCESSED_DIR)
+        # Update the file metadata using the full path
+        update_file_metadata(csv_file_path, 'preprocessed')
+
+def process_all_xml_files():
+    xml_files = glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml'))
+    process_files(xml_files)
 
 def process_first_x_files(x):
     xml_files = sorted(glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml')))[:x]
@@ -98,12 +121,22 @@ def process_last_x_files(x):
     xml_files = sorted(glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml')))[-x:]
     process_files(xml_files)
 
+def process_random_x_files(x):
+    xml_files = glob.glob(os.path.join(config.DATA_RAW_DIR, '*.xml'))
+    if len(xml_files) < x:
+        selected_files = xml_files
+    else:
+        selected_files = random.sample(xml_files, x)
+    process_files(selected_files)
+
+
+
 if __name__ == "__main__":
     
-    # Example usage
-    # xml_file_path = 'data/raw/10Y1001A1001A48H_20231102_to_20231103_prices.xml'  # Replace with your XML file path
+    # Example usage for specific files
+    # xml_file_path = 'NO1_Week40_2023_10_02_to_2023_10_08_prices.xml'  # Replace with your XML file path
     
-    user_choice = input("Choose an option: 'specific', 'all', 'first X', or 'last X' files: ").strip().lower()
+    user_choice = input("Choose an option: 'specific', 'all', 'first X', 'last X', or 'random X' files: ").strip().lower()
 
     if user_choice == 'specific':
         file_name = input("Enter the name of the file to process (e.g., 'example.xml'): ").strip()
@@ -134,6 +167,16 @@ if __name__ == "__main__":
                 process_last_x_files(num_files)
                 print(f"Processed the last {num_files} files in the raw data directory.")
                 
+        except (IndexError, ValueError) as e:
+            print(f"Invalid input: {e}")
+    
+    elif user_choice.startswith('random'):
+        try:
+            num_files = int(user_choice.split()[1])
+            if num_files < 0:
+                raise ValueError("Number of files must be non-negative.")
+            process_random_x_files(num_files)
+            print(f"Processed a random selection of {num_files} files from the raw data directory.")
         except (IndexError, ValueError) as e:
             print(f"Invalid input: {e}")
 
