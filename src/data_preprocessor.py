@@ -10,6 +10,7 @@ import pandas as pd
 import glob
 import random
 from data_processing_tracker import update_file_metadata
+from utils import save_df_to_csv
 
 
 
@@ -79,23 +80,6 @@ def parse_xml_to_df(xml_file_path):
 
     df = pd.DataFrame(data_records)
     return df
-
-def save_df_to_csv(df, filename, directory='data/processed'):
-    """
-    Save a DataFrame to a CSV file in the specified directory.
-
-    Parameters:
-    df (DataFrame): The pandas DataFrame to save.
-    filename (str): The filename to use, without the directory path.
-    directory (str): The directory where the file will be saved.
-    """
-
-    # Define the full file path
-    file_path = os.path.join(directory, filename)
-    
-    # Save the DataFrame to CSV
-    df.to_csv(file_path, index=False)
-    print(f"Data saved to {file_path}")
 
 def process_files(file_list):
     for xml_file in file_list:
