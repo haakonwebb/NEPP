@@ -14,7 +14,7 @@ def clean_data(df):
     df = df.drop_duplicates()
 
     # Handle missing values
-    df['price'].fillna(method='ffill', inplace=True)  # Forward fill for price
+    df['price'].ffill(inplace=True)
 
     # Correcting data types
     df['period_start'] = pd.to_datetime(df['period_start'])
@@ -26,18 +26,35 @@ def clean_data(df):
 
     return df
 
-def clean_file(file_path):
+def clean_file(file_path, area_code_folder):
     if check_processing_stage(file_path, 'preprocessed'):
         df = pd.read_csv(file_path)
         cleaned_df = clean_data(df)
-        new_file_path = file_path.replace('_preprocessed.csv', '_cleaned.csv')
-        save_df_to_csv(cleaned_df, new_file_path)  # Using the imported function
-        update_file_metadata(new_file_path, 'cleaned')
-        print(f"File {file_path} has been cleaned and saved as {new_file_path}.")
+
+        # Save the cleaned data in the corresponding area code subfolder
+        cleaned_file_path = os.path.join(area_code_folder, os.path.basename(file_path))
+        save_df_to_csv(cleaned_df, cleaned_file_path, overwrite=True)
+
+        # Update metadata
+        update_file_metadata(cleaned_file_path, 'cleaned')
+        print(f"File {file_path} has been cleaned and saved in the cleaned directory.")
     else:
         print(f"File {file_path} has not been preprocessed. Skipping.")
 
 if __name__ == "__main__":
-    preprocessed_files = os.path.join(config.DATA_PROCESSED_DIR, '*_preprocessed.csv')
-    for file_path in glob.glob(preprocessed_files):
-        clean_file(file_path)
+    area_code = input("Enter the area code for data cleaning (e.g., 'NO1'): ").strip().upper()
+    area_code_folder = os.path.join(config.DATA_PREPROCESSED_DIR, area_code)
+
+    # Check if the specified area code folder exists
+    if not os.path.exists(area_code_folder):
+        print(f"No preprocessed data found for area code {area_code}. Exiting.")
+        exit()
+
+    # Create corresponding area code subfolder in cleaned data directory
+    cleaned_area_code_folder = os.path.join(config.DATA_CLEANED_DIR, area_code)
+    os.makedirs(cleaned_area_code_folder, exist_ok=True)
+
+    # Iterate through each file in the specified area code subfolder
+    preprocessed_files = glob.glob(os.path.join(area_code_folder, '*.csv'))
+    for file_path in preprocessed_files:
+        clean_file(file_path, cleaned_area_code_folder)
