@@ -12,7 +12,7 @@ NEPP (Norwegian Electricity Price Predictor) is a machine learning-based predict
 ## Project Structure
 
 Here's a brief overview of the project's file structure:
-
+```
 Portfolio_Elec_Model/
 │
 ├── data/
@@ -48,6 +48,7 @@ Portfolio_Elec_Model/
 ├── LICENSE # License details
 ├── README.md # Project overview (this file)
 └── requirements.txt # Project dependencies
+```
 
 ## Installation
 
