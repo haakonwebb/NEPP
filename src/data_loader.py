@@ -4,32 +4,34 @@
 
 import pandas as pd
 import os
-import glob
 import config
 
-def load_all_data():
+def load_data(year, area_code, stage='normalized'):
     """
-    Load all CSV files in the processed data directory into pandas DataFrames.
+    Load CSV files from a specific year and area code within a processing stage.
+
+    Parameters:
+    year (int): Year of the data to be loaded.
+    area_code (str): The area code for the data.
+    stage (str): Processing stage folder ('preprocessed', 'cleaned', 'normalized').
 
     Returns:
-    dict: A dictionary where keys are file names and values are DataFrames.
+    DataFrame: A single DataFrame containing all data for the specified year and area code.
     """
-    file_path_pattern = os.path.join(config.DATA_PROCESSED_DIR, '*.csv')
-    csv_files = glob.glob(file_path_pattern)
+    folder_path = os.path.join(config.DATA_PROCESSED_DIR, stage, area_code)
+    file_path = os.path.join(folder_path, f"{area_code}_{year}.csv")
 
-    data_frames = {}
-    for csv_file in csv_files:
-        try:
-            df = pd.read_csv(csv_file)
-            file_name = os.path.basename(csv_file)
-            data_frames[file_name] = df
-            print(f"Loaded {file_name}: {df.shape[0]} rows, {df.shape[1]} columns")
-        except Exception as e:
-            print(f"Error loading file {csv_file}: {e}")
+    if os.path.exists(file_path):
+        return pd.read_csv(file_path)
+    else:
+        print(f"No data found for year {year} and area code {area_code} in {stage} stage.")
+        return None
 
-    return data_frames
-
+# Example usage
 if __name__ == "__main__":
-    # Load all data and print the number of files loaded
-    all_data = load_all_data()
-    print(f"Total files loaded: {len(all_data)}")
+    # Load data for a specific year and area code from the 'normalized' folder
+    year = 2020
+    area_code = "NO1"
+    normalized_data = load_data(year, area_code, 'normalized')
+    if normalized_data is not None:
+        print(f"Loaded data for {year}, {area_code}: {normalized_data.shape}")
