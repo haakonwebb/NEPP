@@ -4,8 +4,17 @@
 
 # Configuration settings for the project
 
-DATA_RAW_DIR = 'data/raw/'
-DATA_PROCESSED_DIR = 'data/processed/'
-MODEL_SAVE_PATH = 'models/trained_model.h5'
+# Base directory for raw and processed data
+BASE_DATA_DIR = 'data/'
+
+# Subdirectories for different stages of data processing
+DATA_RAW_DIR = BASE_DATA_DIR + 'raw/'
+DATA_PROCESSED_DIR = BASE_DATA_DIR + 'processed/'
+DATA_PREPROCESSED_DIR = DATA_PROCESSED_DIR + 'preprocessed/'
+DATA_CLEANED_DIR = DATA_PROCESSED_DIR + 'cleaned/'
+DATA_NORMALIZED_DIR = DATA_PROCESSED_DIR + 'normalized/'
+
+# Other configurations
+MODEL_SAVE_PATH = 'outputs/models/trained_model.h5'
 TRAINING_EPOCHS = 100
 BATCH_SIZE = 32
