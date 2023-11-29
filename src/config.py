@@ -15,6 +15,6 @@ DATA_CLEANED_DIR = DATA_PROCESSED_DIR + 'cleaned/'
 DATA_NORMALIZED_DIR = DATA_PROCESSED_DIR + 'normalized/'
 
 # Other configurations
-MODEL_SAVE_PATH = 'outputs/models/trained_model.h5'
-TRAINING_EPOCHS = 100
+MODEL_SAVE_PATH = 'outputs/models/'
+TRAINING_EPOCHS = 100  #It seems like this might need to be updated later on, increasing the number of EPOCH's
 BATCH_SIZE = 32
