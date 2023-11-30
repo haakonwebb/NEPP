@@ -33,9 +33,9 @@ def fetch_data(start_date, end_date, area_code_name):
         print(f"Invalid area code name: {area_code_name}")
         return
 
-    # Adjust start and end times to cover the entire days
-    start = pd.Timestamp(start_date, tz='Europe/Oslo').replace(hour=0, minute=0, second=0)
-    end = pd.Timestamp(end_date, tz='Europe/Oslo') + pd.DateOffset(days=1)
+    # Adjust start and end times to Timestamp
+    start = pd.Timestamp(start_date)
+    end = pd.Timestamp(end_date)
 
     max_days_per_request = 370
     current = start
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     the dates into an appropriate amount of requests.
     Example usage is fetch_data_with_retries(StartDate(YYYYMMDD), EndDate(YYYYMMDD), Area_code(NO#))
     """
-    fetch_data_with_retries('20170101', '20221231', 'NO1')
+    fetch_data_with_retries('20220101', '20221231', 'NO3')
