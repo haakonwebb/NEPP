@@ -1,19 +1,17 @@
-# Copyright (C) 2023 Haakon Vollheim Webb
-# This file is part of NEPP which is released under GNU GPLv3.
-# See file LICENSE or go to https://www.gnu.org/licenses/gpl-3.0.html for full license details.
-
 import pandas as pd
 import os
 import config
 
-def load_data(year, area_code, stage='normalized'):
+def load_data(year, area_code, stage='normalized', specific_date=None):
     """
     Load CSV files from a specific year and area code within a processing stage.
+    Optionally filter data to a specific date.
 
     Parameters:
     year (int): Year of the data to be loaded.
     area_code (str): The area code for the data.
     stage (str): Processing stage folder ('preprocessed', 'cleaned', 'normalized').
+    specific_date (str, optional): Specific date to filter data in 'YYYYMMDD' format.
 
     Returns:
     DataFrame: A single DataFrame containing all data for the specified year and area code.
@@ -22,16 +20,23 @@ def load_data(year, area_code, stage='normalized'):
     file_path = os.path.join(folder_path, f"{area_code}_{year}.csv")
 
     if os.path.exists(file_path):
-        return pd.read_csv(file_path)
+        df = pd.read_csv(file_path)
+
+        # Filter for a specific date if provided
+        if specific_date:
+            df['period_start'] = pd.to_datetime(df['period_start'])
+            df = df[df['period_start'].dt.strftime('%Y%m%d') == specific_date]
+
+        return df
     else:
         print(f"No data found for year {year} and area code {area_code} in {stage} stage.")
         return None
 
 # Example usage
 if __name__ == "__main__":
-    # Load data for a specific year and area code from the 'normalized' folder
-    year = 2020
-    area_code = "NO1"
-    normalized_data = load_data(year, area_code, 'normalized')
-    if normalized_data is not None:
-        print(f"Loaded data for {year}, {area_code}: {normalized_data.shape}")
+    year = 2023
+    area_code = "NO2"
+    specific_date = "20230915"  # Example date in 'YYYYMMDD' format
+    data_for_specific_date = load_data(year, area_code, 'normalized', specific_date)
+    if data_for_specific_date is not None:
+        print(f"Loaded data for {year}, {area_code}, on {specific_date}: {data_for_specific_date.shape}")
