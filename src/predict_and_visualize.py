@@ -145,13 +145,9 @@ def reshape_data_for_prediction(data, look_back=24):
 if __name__ == "__main__":
     # Fetch and process recent data
     recent_data = fetch_and_process_recent_data('NO5')
-    print(recent_data)
-    print('shape of recent data:',recent_data.shape)
 
     # Reshape data for prediction
     reshaped_recent_data = reshape_data_for_prediction(recent_data)
-    print(reshaped_recent_data)
-    print('shape of reshaped data',reshaped_recent_data.shape)
 
     # Get the current date in UTC+1
     current_time_utc_plus_1 = datetime.now(pytz.utc) + timedelta(hours=1)
@@ -164,7 +160,6 @@ if __name__ == "__main__":
         if latest_data_date == current_date:
             print('Data is for today, predict for tomorrow')
             next_day_predictions = predict_next_24_hours(config.MODEL_SAVE_PATH+'trained_model1.keras', reshaped_recent_data)
-            print(next_day_predictions)
             visualize_predictions(next_day_predictions)
         elif latest_data_date < current_date:
             print('Data is for tomorrows date, predict for the next two days')
