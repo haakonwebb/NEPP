@@ -6,7 +6,6 @@ NEPP (Norwegian Electricity Price Predictor) is a machine learning-based predict
 - [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Project Structure
@@ -99,6 +98,8 @@ To run the NEPP project, follow these steps:
 
 4. **Prediction and Analysis:**
 - Use the main script or model scripts to perform predictions and analyses.
+- A prediction for the next 24 hours should look something like this (note that this is a work in progress and the prediction is not currently functioning correctly)
+![Electricity Price Prediction for the Next 24 Hours](https://imgur.com/ObwlziJ.png)
 
 ## License
 
