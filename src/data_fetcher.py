@@ -36,7 +36,7 @@ def fetch_data(start_date, end_date, area_code_name):
     # Adjust start and end times to Timestamp
     start = pd.Timestamp(start_date)
     end = pd.Timestamp(end_date)
-
+    
     max_days_per_request = 370
     current = start
 
@@ -83,5 +83,6 @@ if __name__ == "__main__":
     Therefore when querying dates/periods longer than one year(roughly) the code will split
     the dates into an appropriate amount of requests.
     Example usage is fetch_data_with_retries(StartDate(YYYYMMDD), EndDate(YYYYMMDD), Area_code(NO#))
+    It retrieves all information currently available from the start date and including the end date
     """
-    fetch_data_with_retries('20220101', '20221231', 'NO3')
+    fetch_data_with_retries('20231201', '20231202', 'NO5')

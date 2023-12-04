@@ -104,6 +104,9 @@ def parse_xml_to_df(xml_file_path):
                 if not (measurement_start_time_utc1 >= start_date_utc1 and measurement_start_time_utc1 <= end_date_utc1):
                     continue
 
+                # Set end time
+                measurement_end_time_utc1 = measurement_start_time_utc1 + timedelta(hours=1)
+
                 data_records.append({
                     'price': price_amount,
                     'business_type': business_type,
@@ -111,7 +114,7 @@ def parse_xml_to_df(xml_file_path):
                     'out_domain': out_domain,
                     'currency': currency,
                     'period_start': measurement_start_time_utc1.isoformat(),
-                    'period_end': (measurement_start_time_utc1 + timedelta(hours=1)).isoformat()
+                    'period_end': measurement_end_time_utc1.isoformat()
                 })
 
     df = pd.DataFrame(data_records)
