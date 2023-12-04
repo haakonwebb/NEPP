@@ -82,6 +82,8 @@ touch .env
 ```
 ENTSOE_API_KEY=your_entsoe_api_key_here
 ```
+- Applying for an API key can be done by following this doucment:
+[Entsoe API Token Management](https://transparency.entsoe.eu/content/static_content/download?path=/Static%20content/API-Token-Management.pdf)
 
 ## Usage
 
@@ -98,7 +100,7 @@ To run the NEPP project, follow these steps:
 
 4. **Prediction and Analysis:**
 - Use the main script or model scripts to perform predictions and analyses.
-- A prediction for the next 24 hours should look something like this (note that this is a work in progress and the prediction is not currently functioning correctly)
+- A prediction for the next 24 hours should look something like this (note that this is a prototype and the prediction is not functioning correctly)
 ![Electricity Price Prediction for the Next 24 Hours](https://imgur.com/ObwlziJ.png)
 
 ## License
