@@ -82,6 +82,8 @@ touch .env
 ```
 ENTSOE_API_KEY=your_entsoe_api_key_here
 ```
+- Applying for an API key can be done by following this doucment:
+[Entsoe API Token Management](https://transparency.entsoe.eu/content/static_content/download?path=/Static%20content/API-Token-Management.pdf)
 
 ## Usage
 
