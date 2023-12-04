@@ -7,6 +7,7 @@ NEPP (Norwegian Electricity Price Predictor) is a machine learning-based predict
 - [Installation](#installation)
 - [Usage](#usage)
 - [License](#license)
+- [Declaration](#declaration)
 
 ## Project Structure
 
@@ -106,3 +107,7 @@ To run the NEPP project, follow these steps:
 ## License
 
 This project is licensed under the GNU GPLv3. See the [LICENSE](LICENSE) file for more details.
+
+## Declaration
+- Most of the code is produced by GPT-4.
+- Resource used for theory: [A Machine Learning Approach for future electricity price prediction](https://www.diva-portal.org/smash/get/diva2:1713311/FULLTEXT01.pdf)
