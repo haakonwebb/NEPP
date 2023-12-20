@@ -33,6 +33,7 @@ Portfolio_Elec_Model/
 │ ├── data_processing_tracker.py # Data processing tracking
 │ ├── main.py # Main script for running the project
 │ ├── model.py # Model definition
+│ ├── visualize_and_predict.py # Visualization and Prediction script
 │ ├── train.py # Model training script
 │ └── utils.py # Utility functions
 │
